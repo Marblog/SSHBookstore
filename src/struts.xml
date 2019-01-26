@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+
+<package name="login" extends="struts-default" namespace="/login">
+<action name="loginaction" class="useraction" method="login">
+<result name="success">/admin/login/home.jsp</result>
+<result name="error">/admin/error/privilege.jsp</result>
+</action>
+</package>
+<package name="default" extends="struts-default" namespace="/">
+<interceptors>
+<interceptor name="loginfilter" class="cn.itcast.bookStore.filter.LoginFilter"></interceptor>
+<interceptor-stack name="defaultdemo">
+<interceptor-ref name="defaultStack"></interceptor-ref>
+<interceptor-ref name="loginfilter"></interceptor-ref>
+</interceptor-stack>
+</interceptors>
+<default-interceptor-ref name="defaultdemo"></default-interceptor-ref>
+<global-results>
+<result name="login">/admin/login/login.jsp</result>
+</global-results>
+<action name="productsaddaction" class="productsaction" method="addProducts">
+<result name="success" type="redirectAction">
+<!--Action名参数 -->
+<param name="actionName">listproductsaction</param>
+<!--命名 空间参数 -->
+<param name="namespace">/</param>
+</result>
+</action>
+<action name="productsdelaction" class="productsaction" method="delProducts">
+<result name="success" type="redirectAction">
+<!--Action名参数 -->
+<param name="actionName">listproductsaction</param>
+<!--命名 空间参数 -->
+<param name="namespace">/</param>
+</result>
+</action>
+<action name="productseditaction" class="productsaction" method="editProducts">
+<result name="success" type="redirectAction">
+<!--Action名参数 -->
+<param name="actionName">listproductsaction</param>
+<!--命名 空间参数 -->
+<param name="namespace">/</param>
+</result>
+</action>
+<action name="findproductsbymanyconditionstaction" class="productsaction"
+ method="findProductsByManyConditions">
+<result name="success">/admin/products/list.jsp</result>
+</action>
+<action name="listproductsaction" class="productsaction" method="listProducts">
+<result name="success">/admin/products/list.jsp</result>
+</action>
+<action name="findProductsByIdAction" class="productsaction" method="findProductById">
+<result name="success">/admin/products/edit.jsp</result>
+</action>
+<action name="addNoticeaction" class="noticeaction" method="addActice">
+<result name="success" type="redirectAction">listNoticeaction</result>
+</action>
+<action name="delNoticeaction" class="noticeaction" method="delNotice">
+<result name="success" type="redirectAction">listNoticeaction</result>
+</action>
+<action name="listNoticeaction" class="noticeaction" method="listNotice">
+<result name="success">/admin/notices/list.jsp</result>
+</action>
+<action name="editNoticeaction" class="noticeaction" method="editNotice">
+<result name="success" type="redirectAction">listNoticeaction</result>
+</action>
+<action name="findNoticeByIdaction" class="noticeaction" method="findNoticeById">
+<result name="success">/admin/notices/edit.jsp</result>
+</action>
+<action name="findorder" class="ordersaction" method="findOrders">
+<result name="success">/admin/orders/list.jsp</result>
+</action>
+<action name="findOrderByManyConditionaction" class="ordersaction" method="findOrderByManyCondition">
+<result name="success">/admin/orders/list.jsp</result>
+</action>
+<action name="findOrderByIdaction" class="ordersaction" method="findOrderById">
+<result name="success">/admin/orders/view.jsp</result>
+</action>
+
+<action name="delOrderByIdaction" class="ordersaction" method="delOrderById">
+<result name="success" type="redirectAction">findorder</result>
+</action>
+<action name="loginoutaction" class="useraction" method="loginout">
+<result name="success">/admin/login/login.jsp</result>
+</action>
+</package>
+</struts>    
+
+   

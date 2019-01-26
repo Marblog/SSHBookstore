@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	
+	">
+
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="url" value="jdbc:mysql:///bookstore_new"></property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="123456"></property>
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>cn/itcast/bookStore/domain/Notice.hbm.xml</value>
+				<value>
+					cn/itcast/bookStore/domain/Orderitem.hbm.xml
+				</value>
+				<value>cn/itcast/bookStore/domain/Orders.hbm.xml</value>
+				<value>
+					cn/itcast/bookStore/domain/Products.hbm.xml
+				</value>
+				<value>cn/itcast/bookStore/domain/User.hbm.xml</value></list>
+		</property></bean>
+		<bean id="userdao" class="cn.itcast.bookStore.dao.UserDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		</bean>
+		<bean id="productdao" class="cn.itcast.bookStore.dao.ProductDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		</bean>
+		<bean id="orderdao" class="cn.itcast.bookStore.dao.OrderDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		</bean>
+		<bean id="orderitemdao" class="cn.itcast.bookStore.dao.OrderItemDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		</bean>
+		<bean id="noticedao" class="cn.itcast.bookStore.dao.NoticeDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		</bean>
+		
+		<bean id="userservice" class="cn.itcast.bookStore.service.UserService">
+		<property name="dao" ref="userdao"></property>
+		</bean>
+		<bean id="productservice" class="cn.itcast.bookStore.service.ProductService">
+		<property name="dao" ref="productdao"></property>
+		</bean>
+		<bean id="orderservice" class="cn.itcast.bookStore.service.OrderService">
+		<property name="odao" ref="orderdao"></property>
+		<property name="oidao" ref="orderitemdao"></property>
+		<property name="pdao" ref="productdao"></property>
+		</bean>
+		<bean id="noticeservice" class="cn.itcast.bookStore.service.NoticeService">
+		<property name="dao" ref="noticedao"></property>
+		</bean>
+		
+		<bean id="productsaction" class="cn.itcast.bookStore.action.ProductsAction">
+		<property name="pservice" ref="productservice"></property>
+		</bean>
+		<bean id="noticeaction" class="cn.itcast.bookStore.action.NoticeAction">
+		<property name="noticeService" ref="noticeservice"></property>
+		</bean>
+		<bean id="ordersaction" class="cn.itcast.bookStore.action.OrderAction">
+		<property name="orderservice" ref="orderservice"></property>
+		</bean>
+		
+		<bean id="useraction" class="cn.itcast.bookStore.action.UserAction">
+		<property name="userservice" ref="userservice"></property>
+		</bean>
+		
+		<bean id="txtManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+		</bean>
+		<tx:advice id="txtAdvice" transaction-manager="txtManager">
+		<tx:attributes>
+		<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" read-only="false"/>
+		</tx:attributes>
+		</tx:advice>
+		<aop:config>
+		<aop:pointcut expression="execution(* cn.bookStore.service..*.*(..))" id="txtPointCut"/>
+		<aop:advisor advice-ref="txtAdvice" pointcut-ref="txtPointCut"/>
+		</aop:config>
+		
+		</beans>
